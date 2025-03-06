@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
-import { UserRepository } from '@src/modules/user/repository/user.repository';
+import {
+  USER_REPOSITORY,
+  UserRepository,
+} from '@src/modules/user/repository/user.repository';
 import { UserService } from '@src/modules/user/service/user.service';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
   constructor(
-    private readonly userRepository: UserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
     private readonly prisma: PrismaClient,
   ) {}
 
