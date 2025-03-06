@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, user } from '@prisma/client';
+import { Prisma, users } from '@prisma/client';
 import { CommonError } from '@src/common/error/common.error';
 import { ERROR_STATUS } from '@src/common/error/error.status';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
@@ -12,9 +12,9 @@ export class UserRepositoryImpl implements UserRepository {
   async create(
     userCreateDto: UserCreateDto,
     tx: Prisma.TransactionClient,
-  ): Promise<user> {
+  ): Promise<users> {
     try {
-      return await tx.user.create({ data: userCreateDto });
+      return await tx.users.create({ data: userCreateDto });
     } catch (error) {
       console.error(error);
       throw new CommonError(ERROR_STATUS.DB_INSERT_ERROR);
