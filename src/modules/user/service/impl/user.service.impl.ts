@@ -16,9 +16,10 @@ export class UserServiceImpl implements UserService {
   ) {}
 
   async create(userCreateDto: UserCreateDto): Promise<UserDto> {
-    const createUserResult = await this.prisma.$transaction((tx) =>
-      this.userRepository.create(userCreateDto, tx),
-    );
+    const createUserResult = await this.prisma.$transaction((tx) => {
+      userCreateDto.type = 2;
+      return this.userRepository.create(userCreateDto, tx);
+    });
     return UserDto.fromUserEntityToDto(createUserResult);
   }
 }
