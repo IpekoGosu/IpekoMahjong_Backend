@@ -6,6 +6,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { CommonError } from '@src/common/error/common.error';
+import { CommonErrorResponse } from '@src/common/response/common.response';
 import dayjs from 'dayjs';
 import { Request, Response } from 'express';
 
@@ -15,17 +16,23 @@ export class CommonErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-
     const status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    response.status(status).json({
+    const data = {
       statusCode: status,
       timestamp: dayjs().toISOString(),
       path: request.url,
       error: exception.status,
       message: exception.message,
-    });
+    };
+
+    response.status(status).json(new CommonErrorResponse(data));
   }
+}
+
+interface ExceptionResponse {
+  message: string | string[];
+  [key: string]: any;
 }
 
 @Catch(HttpException)
@@ -35,14 +42,16 @@ export class HttpErrorFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
-    const exceptionResponse = exception.getResponse();
+    const exceptionResponse = exception.getResponse() as ExceptionResponse;
 
-    response.status(status).json({
+    const data = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
       error: 'HTTP_ERROR',
       message: exceptionResponse['message'] || exception.message,
-    });
+    };
+
+    response.status(status).json(new CommonErrorResponse(data));
   }
 }
