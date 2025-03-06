@@ -13,5 +13,5 @@ export class UserCreateDto {
   @IsNotEmpty()
   password: string;
 
-  type: number = 2;
+  type: number;
 }
