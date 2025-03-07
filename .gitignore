@@ -54,3 +54,14 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# .env 파일 (개인 환경 변수 파일)
+.env
+
+# 운영 체제 관련
+.DS_Store         # macOS
+Thumbs.db         # Windows
+# MacOS에서 생성되는 파일
+*.swp
+
+.idea/
