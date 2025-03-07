@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '@src/common/helper/\bbcrypt.hash';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
 import {
@@ -17,9 +18,10 @@ export class UserServiceImpl implements UserService {
     ) {}
 
     async create(userCreateDto: UserCreateDto): Promise<UserDto> {
-        const createUserResult = await this.prisma.$transaction((tx) => {
+        const createUserResult = await this.prisma.$transaction(async (tx) => {
             userCreateDto.type = 2;
-            return this.userRepository.create(userCreateDto, tx);
+            userCreateDto.password = await hashPassword(userCreateDto.password);
+            return await this.userRepository.create(userCreateDto, tx);
         });
         return UserDto.fromUserEntityToDto(createUserResult);
     }
