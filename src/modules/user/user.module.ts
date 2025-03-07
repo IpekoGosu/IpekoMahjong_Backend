@@ -7,17 +7,17 @@ import { UserServiceImpl } from '@src/modules/user/service/impl/user.service.imp
 import { USER_SERVICE } from '@src/modules/user/service/user.service';
 
 @Module({
-  imports: [PrismaModule],
-  controllers: [UserController],
-  providers: [
-    {
-      provide: USER_SERVICE,
-      useClass: UserServiceImpl,
-    },
-    {
-      provide: USER_REPOSITORY,
-      useClass: UserRepositoryImpl,
-    },
-  ],
+    imports: [PrismaModule],
+    controllers: [UserController],
+    providers: [
+        {
+            provide: USER_SERVICE,
+            useClass: UserServiceImpl,
+        },
+        {
+            provide: USER_REPOSITORY,
+            useClass: UserRepositoryImpl,
+        },
+    ],
 })
 export class UserModule {}

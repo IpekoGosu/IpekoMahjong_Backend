@@ -7,17 +7,17 @@ import { UserRepository } from '@src/modules/user/repository/user.repository';
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
-  constructor() {}
+    constructor() {}
 
-  async create(
-    userCreateDto: UserCreateDto,
-    tx: Prisma.TransactionClient,
-  ): Promise<users> {
-    try {
-      return await tx.users.create({ data: userCreateDto });
-    } catch (error) {
-      console.error(error);
-      throw new CommonError(ERROR_STATUS.DB_INSERT_ERROR);
+    async create(
+        userCreateDto: UserCreateDto,
+        tx: Prisma.TransactionClient,
+    ): Promise<users> {
+        try {
+            return await tx.users.create({ data: userCreateDto });
+        } catch (error) {
+            console.error(error);
+            throw new CommonError(ERROR_STATUS.DB_INSERT_ERROR);
+        }
     }
-  }
 }
