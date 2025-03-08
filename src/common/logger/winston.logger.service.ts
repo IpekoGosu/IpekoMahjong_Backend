@@ -1,6 +1,7 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
 import { format, toZonedTime } from 'date-fns-tz';
+import chalk from 'chalk';
 
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
@@ -28,7 +29,15 @@ export class WinstonLoggerService implements LoggerService {
                         winston.format.timestamp(),
                         winston.format.printf(
                             ({ timestamp, level, message }) => {
-                                return `[${String(timestamp)}] ${level}: ${String(message)}`;
+                                let levelStr = level;
+                                if (level === 'info') {
+                                    levelStr = chalk.green(level);
+                                } else if (level === 'warn') {
+                                    levelStr = chalk.yellow(level);
+                                } else if (level === 'error') {
+                                    levelStr = chalk.red(level);
+                                }
+                                return `[${chalk.cyan(String(timestamp))}] [${levelStr}] ${String(message)}`;
                             },
                         ),
                     ),
