@@ -8,6 +8,7 @@ import {
 import { CommonError } from '@src/common/error/common.error';
 import { CommonErrorResponse } from '@src/common/response/common.response';
 import { Request, Response } from 'express';
+import { format, toZonedTime } from 'date-fns-tz';
 
 @Catch(CommonError)
 export class CommonErrorFilter implements ExceptionFilter {
@@ -19,7 +20,10 @@ export class CommonErrorFilter implements ExceptionFilter {
 
         const data = {
             statusCode: status,
-            timestamp: new Date().toISOString(),
+            timestamp: format(
+                toZonedTime(new Date(), 'Asia/Seoul'),
+                'yyyy-MM-dd HH:mm:ss',
+            ),
             path: request.url,
             error: exception.status,
             message: exception.message,
@@ -45,7 +49,10 @@ export class HttpErrorFilter implements ExceptionFilter {
 
         const data = {
             statusCode: status,
-            timestamp: new Date().toISOString(),
+            timestamp: format(
+                toZonedTime(new Date(), 'Asia/Seoul'),
+                'yyyy-MM-dd HH:mm:ss',
+            ),
             path: request.url,
             error: 'HTTP_ERROR',
             message: exceptionResponse['message'] || exception.message,
