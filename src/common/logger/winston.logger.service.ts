@@ -1,5 +1,6 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
+import { format, toZonedTime } from 'date-fns-tz';
 
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
@@ -9,14 +10,28 @@ export class WinstonLoggerService implements LoggerService {
         this.logger = winston.createLogger({
             level: 'info',
             format: winston.format.combine(
-                winston.format.timestamp(),
+                winston.format.timestamp({
+                    format: () => {
+                        const timeZone = 'Asia/Seoul';
+                        const utcDate = new Date();
+                        const kstDate = toZonedTime(utcDate, timeZone);
+                        return format(kstDate, 'yyyy-MM-dd HH:mm:ss');
+                    },
+                }),
                 winston.format.printf(({ timestamp, level, message }) => {
-                    return `[${timestamp}] ${level}: ${message}`;
+                    return `[${String(timestamp)}] ${level}: ${String(message)}`;
                 }),
             ),
             transports: [
                 new winston.transports.Console({
-                    format: winston.format.simple(),
+                    format: winston.format.combine(
+                        winston.format.timestamp(),
+                        winston.format.printf(
+                            ({ timestamp, level, message }) => {
+                                return `[${String(timestamp)}] ${level}: ${String(message)}`;
+                            },
+                        ),
+                    ),
                 }),
             ],
         });

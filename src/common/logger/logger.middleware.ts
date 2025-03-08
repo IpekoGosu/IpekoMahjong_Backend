@@ -23,17 +23,14 @@ export class LoggerMiddleware implements NestMiddleware {
             res.locals.body = body; // 응답 본문을 res.locals에 저장
 
             // `body`가 배열인지 객체인지 확인
-            if (Array.isArray(body)) {
-                this.logger.log(
-                    `Response Body (Array): ${JSON.stringify(body)}`,
-                );
-            } else if (typeof body === 'object' && body !== null) {
-                this.logger.log(
-                    `Response Body (Object): ${JSON.stringify(body)}`,
-                );
+            if (
+                Array.isArray(body) ||
+                (typeof body === 'object' && body !== null)
+            ) {
+                this.logger.log(`Response Body: ${JSON.stringify(body)}`);
             } else {
                 // `body`가 배열도 아니고 객체도 아닐 경우
-                this.logger.log(`Response Body (Other): ${String(body)}`);
+                this.logger.log(`Response Body: ${String(body)}`);
             }
 
             return originalSend.call(res, body); // 원래의 send 메서드 호출
