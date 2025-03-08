@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { CommonError } from '@src/common/error/common.error';
 import { CommonErrorResponse } from '@src/common/response/common.response';
-import dayjs from 'dayjs';
 import { Request, Response } from 'express';
 
 @Catch(CommonError)
@@ -20,7 +19,7 @@ export class CommonErrorFilter implements ExceptionFilter {
 
         const data = {
             statusCode: status,
-            timestamp: dayjs().toISOString(),
+            timestamp: new Date().toISOString(),
             path: request.url,
             error: exception.status,
             message: exception.message,
