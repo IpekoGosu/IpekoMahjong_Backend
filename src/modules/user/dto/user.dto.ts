@@ -7,13 +7,7 @@ export class UserDto {
         public readonly type: number,
         public readonly createdAt: string,
         public readonly updatedAt: string,
-    ) {
-        this.email = email;
-        this.name = name;
-        this.type = type;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    ) {}
 
     static fromUserEntityToDto(userEntity: UserEntity) {
         return new UserDto(
