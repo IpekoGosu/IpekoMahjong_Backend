@@ -9,4 +9,5 @@ export interface UserRepository {
         email: string,
         tx: Prisma.TransactionClient,
     ): Promise<users | null>;
+    findById(id: number, tx: Prisma.TransactionClient): Promise<users>;
 }

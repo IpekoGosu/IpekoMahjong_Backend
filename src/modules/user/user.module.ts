@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '@src/modules/authorization/auth.module';
 import { PrismaModule } from '@src/modules/prisma.module';
 import { UserController } from '@src/modules/user/controller/user.controller';
 import { UserRepositoryImpl } from '@src/modules/user/repository/impl/user.repository.impl';
@@ -7,7 +8,7 @@ import { UserServiceImpl } from '@src/modules/user/service/impl/user.service.imp
 import { USER_SERVICE } from '@src/modules/user/service/user.service';
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, AuthModule],
     controllers: [UserController],
     providers: [
         {

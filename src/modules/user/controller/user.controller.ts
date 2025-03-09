@@ -8,7 +8,7 @@ import {
     UserService,
 } from '@src/modules/user/service/user.service';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
     constructor(
         @Inject(USER_SERVICE) private readonly userService: UserService,
@@ -22,10 +22,9 @@ export class UserController {
         return new CommonSuccessResponse<UserDto>(data);
     }
 
-    @Post()
-    async create(
-        @Body() userLogDto: UserLoginDto,
-    ): Promise<> {
-        const data = ...
+    @Post('login')
+    async login(@Body() userLogDto: UserLoginDto): Promise<any> {
+        const data = await this.userService.login(userLogDto);
+        return new CommonSuccessResponse<any>(data);
     }
 }

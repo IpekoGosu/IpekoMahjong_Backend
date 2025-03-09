@@ -9,6 +9,15 @@ import { UserRepository } from '@src/modules/user/repository/user.repository';
 export class UserRepositoryImpl implements UserRepository {
     constructor() {}
 
+    async findById(id: number, tx: Prisma.TransactionClient): Promise<users> {
+        try {
+            return await tx.users.findUniqueOrThrow({ where: { id } });
+        } catch (error) {
+            console.error(error);
+            throw new CommonError(ERROR_STATUS.DB_SELECT_ERROR);
+        }
+    }
+
     async create(
         userCreateDto: UserCreateDto,
         tx: Prisma.TransactionClient,

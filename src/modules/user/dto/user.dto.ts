@@ -2,6 +2,7 @@ import { UserEntity } from '@src/modules/user/entity/user.entity';
 import { format, toZonedTime } from 'date-fns-tz';
 export class UserDto {
     constructor(
+        public readonly id: number,
         public readonly email: string,
         public readonly name: string,
         public readonly type: number,
@@ -11,6 +12,7 @@ export class UserDto {
 
     static fromUserEntityToDto(userEntity: UserEntity) {
         return new UserDto(
+            userEntity.id,
             userEntity.email,
             userEntity.name,
             userEntity.type,
