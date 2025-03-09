@@ -2,6 +2,7 @@ import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { CommonSuccessResponse } from '@src/common/response/common.response';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
+import { UserLoginDto } from '@src/modules/user/dto/user.login.dto';
 import {
     USER_SERVICE,
     UserService,
@@ -19,5 +20,12 @@ export class UserController {
     ): Promise<CommonSuccessResponse<UserDto>> {
         const data = await this.userService.create(userCreateDto);
         return new CommonSuccessResponse<UserDto>(data);
+    }
+
+    @Post()
+    async create(
+        @Body() userLogDto: UserLoginDto,
+    ): Promise<> {
+        const data = ...
     }
 }

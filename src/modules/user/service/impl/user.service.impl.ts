@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '@src/modules/user/helper/bcrypt.hash';
+import {
+    hashPassword,
+    matchPassword,
+} from '@src/modules/user/helper/bcrypt.hash';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
 import {
@@ -8,6 +11,9 @@ import {
     UserRepository,
 } from '@src/modules/user/repository/user.repository';
 import { UserService } from '@src/modules/user/service/user.service';
+import { UserLoginDto } from '@src/modules/user/dto/user.login.dto';
+import { CommonError } from '@src/common/error/common.error';
+import { ERROR_STATUS } from '@src/common/error/error.status';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -27,5 +33,26 @@ export class UserServiceImpl implements UserService {
             return await this.userRepository.create(userCreateDto, tx);
         });
         return UserDto.fromUserEntityToDto(createUserResult);
+    }
+
+    async login(userLoginDto: UserLoginDto) {
+        const dbUser = await this.prisma.$transaction(async (tx) => {
+            return await this.userRepository.findByEmail(
+                userLoginDto.email,
+                tx,
+            );
+        });
+
+        if (dbUser === null) {
+            throw new CommonError(ERROR_STATUS.LOGIN_FAIL_USER_NOT_FOUND);
+        }
+
+        const passwordMatch = await matchPassword(
+            userLoginDto.password,
+            dbUser.password,
+        );
+
+        if (!passwordMatch)
+            throw new CommonError(ERROR_STATUS.LOGIN_FAIL_INCORRECT_PASSWORD);
     }
 }

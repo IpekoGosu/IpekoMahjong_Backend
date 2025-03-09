@@ -20,4 +20,16 @@ export class UserRepositoryImpl implements UserRepository {
             throw new CommonError(ERROR_STATUS.DB_INSERT_ERROR);
         }
     }
+
+    async findByEmail(
+        email: string,
+        tx: Prisma.TransactionClient,
+    ): Promise<users | null> {
+        try {
+            return await tx.users.findUnique({ where: { email } });
+        } catch (error) {
+            console.error(error);
+            throw new CommonError(ERROR_STATUS.DB_SELECT_ERROR);
+        }
+    }
 }
