@@ -1,5 +1,6 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
 import { CommonSuccessResponse } from '@src/common/response/common.response';
+import { JwtDto } from '@src/modules/user/dto/jwt.dto';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
 import { UserLoginDto } from '@src/modules/user/dto/user.login.dto';
@@ -7,6 +8,7 @@ import {
     USER_SERVICE,
     UserService,
 } from '@src/modules/user/service/user.service';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -23,8 +25,11 @@ export class UserController {
     }
 
     @Post('login')
-    async login(@Body() userLogDto: UserLoginDto): Promise<any> {
-        const data = await this.userService.login(userLogDto);
-        return new CommonSuccessResponse<any>(data);
+    async login(
+        @Body() userLogDto: UserLoginDto,
+        @Res() res: Response,
+    ): Promise<void> {
+        const data = await this.userService.login(userLogDto, res);
+        res.send(new CommonSuccessResponse<JwtDto>(data));
     }
 }

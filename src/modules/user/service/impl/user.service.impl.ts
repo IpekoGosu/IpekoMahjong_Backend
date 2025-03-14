@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { CommonError } from '@src/common/error/common.error';
 import { ERROR_STATUS } from '@src/common/error/error.status';
+import { JwtDto } from '@src/modules/user/dto/jwt.dto';
 import {
     AUTH_SERVICE,
     AuthService,
@@ -18,6 +19,7 @@ import {
     UserRepository,
 } from '@src/modules/user/repository/user.repository';
 import { UserService } from '@src/modules/user/service/user.service';
+import { Response } from 'express';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -41,7 +43,7 @@ export class UserServiceImpl implements UserService {
         return UserDto.fromUserEntityToDto(createUserResult);
     }
 
-    async login(userLoginDto: UserLoginDto) {
+    async login(userLoginDto: UserLoginDto, res: Response) {
         const dbUser = await this.prisma.$transaction(async (tx) => {
             return await this.userRepository.findByEmail(
                 userLoginDto.email,
@@ -63,10 +65,22 @@ export class UserServiceImpl implements UserService {
 
         const userDto = UserDto.fromUserEntityToDto(dbUser);
 
-        return {
-            accessToken: this.authService.createAccessToken(userDto),
-            refreshToken: this.authService.createRefreshToken(userDto),
-        };
+        const accessToken = this.authService.createAccessToken(userDto);
+        const refreshToken = this.authService.createRefreshToken(userDto);
+
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: !!(process.env.NODE_ENV === 'production'), // HTTPS에만 적용
+            maxAge: 1000 * 60 * 120,
+        });
+
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            secure: !!(process.env.NODE_ENV === 'production'),
+            maxAge: 1000 * 60 * 60 * 24 * 14,
+        });
+
+        return new JwtDto(accessToken, refreshToken);
     }
 
     async findById(id: number) {
