@@ -8,6 +8,7 @@ import {
     Res,
 } from '@nestjs/common';
 import { CommonSuccessResponse } from '@src/common/response/common.response';
+import { Public } from '@src/modules/authorization/public.decorator';
 import { JwtDto } from '@src/modules/user/dto/jwt.dto';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
 import { UserDto } from '@src/modules/user/dto/user.dto';
@@ -26,6 +27,7 @@ export class UserController {
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
+    @Public()
     async create(
         @Body() userCreateDto: UserCreateDto,
     ): Promise<CommonSuccessResponse<UserDto>> {
@@ -35,6 +37,7 @@ export class UserController {
 
     @Post('login')
     @HttpCode(HttpStatus.OK)
+    @Public()
     async login(
         @Body() userLogDto: UserLoginDto,
         @Res() res: Response,

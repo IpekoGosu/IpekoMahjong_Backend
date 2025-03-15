@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { WinstonLoggerService } from '@src/common/logger/winston.logger.service';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import { JwtAuthGuard } from '@src/modules/authorization/jwt-auth.guard';
 
 dotenv.config();
 
@@ -10,6 +11,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     // winston logger
     app.useLogger(app.get(WinstonLoggerService));
+    // jwt auth guard
+    app.useGlobalGuards(new JwtAuthGuard(new Reflector()));
     // validation pipe
     app.useGlobalPipes(
         new ValidationPipe({
