@@ -20,6 +20,10 @@ import {
 } from '@src/modules/user/repository/user.repository';
 import { UserService } from '@src/modules/user/service/user.service';
 import { Response } from 'express';
+import {
+    REDIS_SERVICE,
+    RedisService,
+} from '@src/modules/redis/service/redis.service';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -28,6 +32,8 @@ export class UserServiceImpl implements UserService {
         private readonly userRepository: UserRepository,
         @Inject(AUTH_SERVICE)
         private readonly authService: AuthService,
+        @Inject(REDIS_SERVICE)
+        private readonly redisService: RedisService,
         private readonly prisma: PrismaClient,
     ) {}
 
@@ -44,6 +50,7 @@ export class UserServiceImpl implements UserService {
     }
 
     async login(userLoginDto: UserLoginDto, res: Response) {
+        // 1. password match with db user
         const dbUser = await this.prisma.$transaction(async (tx) => {
             return await this.userRepository.findByEmail(
                 userLoginDto.email,
@@ -65,6 +72,7 @@ export class UserServiceImpl implements UserService {
 
         const userDto = UserDto.fromUserEntityToDto(dbUser);
 
+        // 2. create jwts and cookies
         const accessToken = this.authService.createAccessToken(userDto);
         const refreshToken = this.authService.createRefreshToken(userDto);
 
@@ -73,12 +81,18 @@ export class UserServiceImpl implements UserService {
             secure: !!(process.env.NODE_ENV === 'production'), // HTTPS에만 적용
             maxAge: 1000 * 60 * 120,
         });
-
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: !!(process.env.NODE_ENV === 'production'),
             maxAge: 1000 * 60 * 60 * 24 * 14,
         });
+
+        // 3. add refreshToken to redis
+        await this.redisService.set(
+            `refreshToken:${userDto.id}`,
+            refreshToken,
+            60 * 60 * 24 * 14,
+        );
 
         return new JwtDto(accessToken, refreshToken);
     }
