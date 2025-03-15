@@ -1,4 +1,12 @@
-import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    HttpCode,
+    HttpStatus,
+    Inject,
+    Post,
+    Res,
+} from '@nestjs/common';
 import { CommonSuccessResponse } from '@src/common/response/common.response';
 import { JwtDto } from '@src/modules/user/dto/jwt.dto';
 import { UserCreateDto } from '@src/modules/user/dto/user.create.dto';
@@ -17,6 +25,7 @@ export class UserController {
     ) {}
 
     @Post()
+    @HttpCode(HttpStatus.CREATED)
     async create(
         @Body() userCreateDto: UserCreateDto,
     ): Promise<CommonSuccessResponse<UserDto>> {
@@ -25,6 +34,7 @@ export class UserController {
     }
 
     @Post('login')
+    @HttpCode(HttpStatus.OK)
     async login(
         @Body() userLogDto: UserLoginDto,
         @Res() res: Response,
