@@ -24,4 +24,8 @@ export class AuthServiceImpl implements AuthService {
             },
         );
     }
+
+    verifyToken(token: string) {
+        this.jwtService.ve;
+    }
 }

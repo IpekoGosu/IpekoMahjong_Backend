@@ -1,10 +1,12 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Inject,
     Post,
+    Req,
     Res,
 } from '@nestjs/common';
 import { CommonSuccessResponse } from '@src/common/response/common.response';
@@ -17,7 +19,7 @@ import {
     USER_SERVICE,
     UserService,
 } from '@src/modules/user/service/user.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -45,4 +47,8 @@ export class UserController {
         const data = await this.userService.login(userLogDto, res);
         res.send(new CommonSuccessResponse<JwtDto>(data));
     }
+
+    @Get('renewal')
+    @Public()
+    async renew(@Req() req: Request): Promise<void> {}
 }

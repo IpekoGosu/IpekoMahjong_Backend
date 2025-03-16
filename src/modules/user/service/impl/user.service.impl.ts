@@ -19,7 +19,7 @@ import {
     UserRepository,
 } from '@src/modules/user/repository/user.repository';
 import { UserService } from '@src/modules/user/service/user.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
     REDIS_SERVICE,
     RedisService,
@@ -95,6 +95,16 @@ export class UserServiceImpl implements UserService {
         );
 
         return new JwtDto(accessToken, refreshToken);
+    }
+
+    async renewAccessToken(req: Request) {
+        const refershToken = req.cookies('refresh_token') as string;
+        if (!refershToken)
+            throw new CommonError(ERROR_STATUS.LOGIN_FAIL_USER_NOT_FOUND);
+
+        try {
+            this.authService
+        }
     }
 
     async findById(id: number) {
